@@ -1,0 +1,5 @@
+שאלה 2
+wide char is a datatype for represnting charcter, the size of this datatype is more than 1 byte, usually 2-4 bytes. 16-32 bits in total.
+By the increasd size we can represent more charcters than we could before.
+The wide char is influenced by endians because we have two bytes or more, and the bytes order matters.
+
