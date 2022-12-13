@@ -8,7 +8,5 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
 include_directories(ex1_files)
 
 add_executable(ComputerStructure
-        ex1_files/ex1.c
-        ex1_files/ex1.h
-        ex1_files/main.c
-        ex2_files/do_main.c)
+        ex3_files/main.c
+        ex3_files/run_main.s)
