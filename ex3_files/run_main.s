@@ -22,7 +22,7 @@ run_main:
     call scanf
 
     movq $format_i, %rdi
-    movq %rax, %rsi
+    movq size_1, %rsi
     movq $0, %rax
     call printf
 
