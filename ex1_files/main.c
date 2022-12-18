@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "ex1.h"
+#include "ex1.c"
 
 int main() {    
     bool bitArray[] = {true, false, true, true, false, true, false, true};    
