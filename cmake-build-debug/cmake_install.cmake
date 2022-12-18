@@ -1,4 +1,4 @@
-# Install script for directory: /home/nirkoren/ComputerStructure
+# Install script for directory: /home/nirkoren/university/ComputerStructure
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/nirkoren/ComputerStructure/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/nirkoren/university/ComputerStructure/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

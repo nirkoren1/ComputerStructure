@@ -39,7 +39,7 @@ include CMakeFiles/rules.ninja
 #############################################
 # Logical path to working directory; prefix for absolute paths.
 
-cmake_ninja_workdir = /home/nirkoren/ComputerStructure/cmake-build-debug/
+cmake_ninja_workdir = /home/nirkoren/university/ComputerStructure/cmake-build-debug/
 # =============================================================================
 # Object build statements for EXECUTABLE target ComputerStructure
 
@@ -49,19 +49,19 @@ cmake_ninja_workdir = /home/nirkoren/ComputerStructure/cmake-build-debug/
 
 build cmake_object_order_depends_target_ComputerStructure: phony || CMakeFiles/ComputerStructure.dir
 
-build CMakeFiles/ComputerStructure.dir/ex3_files/main.c.o: C_COMPILER__ComputerStructure_Debug /home/nirkoren/ComputerStructure/ex3_files/main.c || cmake_object_order_depends_target_ComputerStructure
+build CMakeFiles/ComputerStructure.dir/ex3_files/main.c.o: C_COMPILER__ComputerStructure_Debug /home/nirkoren/university/ComputerStructure/ex3_files/main.c || cmake_object_order_depends_target_ComputerStructure
   DEP_FILE = CMakeFiles/ComputerStructure.dir/ex3_files/main.c.o.d
   FLAGS = -no-pie -g -std=gnu99
-  INCLUDES = -I/home/nirkoren/ComputerStructure/ex1_files
+  INCLUDES = -I/home/nirkoren/university/ComputerStructure/ex1_files
   OBJECT_DIR = CMakeFiles/ComputerStructure.dir
   OBJECT_FILE_DIR = CMakeFiles/ComputerStructure.dir/ex3_files
   TARGET_COMPILE_PDB = CMakeFiles/ComputerStructure.dir/
   TARGET_PDB = ComputerStructure.pdb
 
-build CMakeFiles/ComputerStructure.dir/ex3_files/run_main.s.o: ASM_COMPILER__ComputerStructure_Debug /home/nirkoren/ComputerStructure/ex3_files/run_main.s || cmake_object_order_depends_target_ComputerStructure
+build CMakeFiles/ComputerStructure.dir/ex3_files/run_main.s.o: ASM_COMPILER__ComputerStructure_Debug /home/nirkoren/university/ComputerStructure/ex3_files/run_main.s || cmake_object_order_depends_target_ComputerStructure
   DEP_FILE = CMakeFiles/ComputerStructure.dir/ex3_files/run_main.s.o.d
   FLAGS = -g
-  INCLUDES = -I/home/nirkoren/ComputerStructure/ex1_files
+  INCLUDES = -I/home/nirkoren/university/ComputerStructure/ex1_files
   OBJECT_DIR = CMakeFiles/ComputerStructure.dir
   OBJECT_FILE_DIR = CMakeFiles/ComputerStructure.dir/ex3_files
   TARGET_COMPILE_PDB = CMakeFiles/ComputerStructure.dir/
@@ -89,7 +89,7 @@ build ComputerStructure: C_EXECUTABLE_LINKER__ComputerStructure_Debug CMakeFiles
 # Utility command for edit_cache
 
 build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
-  COMMAND = cd /home/nirkoren/ComputerStructure/cmake-build-debug && /home/nirkoren/Downloads/clion-2022.2.4/bin/cmake/linux/bin/ccmake -S/home/nirkoren/ComputerStructure -B/home/nirkoren/ComputerStructure/cmake-build-debug
+  COMMAND = cd /home/nirkoren/university/ComputerStructure/cmake-build-debug && /home/nirkoren/Downloads/clion-2022.2.4/bin/cmake/linux/bin/ccmake -S/home/nirkoren/university/ComputerStructure -B/home/nirkoren/university/ComputerStructure/cmake-build-debug
   DESC = Running CMake cache editor...
   pool = console
   restat = 1
@@ -101,7 +101,7 @@ build edit_cache: phony CMakeFiles/edit_cache.util
 # Utility command for rebuild_cache
 
 build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
-  COMMAND = cd /home/nirkoren/ComputerStructure/cmake-build-debug && /home/nirkoren/Downloads/clion-2022.2.4/bin/cmake/linux/bin/cmake --regenerate-during-build -S/home/nirkoren/ComputerStructure -B/home/nirkoren/ComputerStructure/cmake-build-debug
+  COMMAND = cd /home/nirkoren/university/ComputerStructure/cmake-build-debug && /home/nirkoren/Downloads/clion-2022.2.4/bin/cmake/linux/bin/cmake --regenerate-during-build -S/home/nirkoren/university/ComputerStructure -B/home/nirkoren/university/ComputerStructure/cmake-build-debug
   DESC = Running CMake to regenerate build system...
   pool = console
   restat = 1
@@ -117,7 +117,7 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 # =============================================================================
 
 #############################################
-# Folder: /home/nirkoren/ComputerStructure/cmake-build-debug
+# Folder: /home/nirkoren/university/ComputerStructure/cmake-build-debug
 
 build all: phony ComputerStructure
 
