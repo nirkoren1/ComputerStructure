@@ -38,7 +38,7 @@ run_func:
     js .L6                                          # if so, jump to the default case
     cmpq $6, %rax                                   # check if the offset is greater than the number of cases
     ja .L6                                          # if so, jump to the default case
-    jmp *.L10(,%rax,8)                               # jump to the switch table
+    jmp *.L10(,%rax,8)                              # jump to the switch table
 
     .L6:                                            # default case printing "invalid option!"
     movq $invalid_option, %rdi
@@ -48,14 +48,14 @@ run_func:
 
     .L1:                                            # case 1
     movq %r12, %rdi                                 # move the first argument to rdi
-    #call pstrlen                                    # call pstrlen
+    call pstrlen                                    # call pstrlen
     movq %rax, %r12                                 # move the return value to r12
 
     movq %r13, %rdi                                 # move the second argument to rdi
-    #call pstrlen                                    # call pstrlen
+    call pstrlen                                    # call pstrlen
     movq %rax, %r13                                 # move the return value to r13
 
-    movq $format_case_1, %rdi                  # move the format string to rdi
+    movq $format_case_1, %rdi                       # move the format string to rdi
     movq %r12, %rsi                                 # move the first argument to rsi
     movq %r13, %rdx                                 # move the second argument to rdx
     movq $0, %rax
@@ -74,20 +74,25 @@ run_func:
     call scanf                                      # call scanf
 
     movq %r12, %rdi                                 # move the first argument to rdi
-    movq old_char, %rsi                            # move the address of old_char to rsi
-    movq new_char, %rdx                            # move the address of new_char to rdx
+    movzbq old_char, %rsi                             # move the address of old_char to rsi
+    movzbq new_char, %rdx                             # move the address of new_char to rdx
     movq $0, %rax
-#    call replaceChar                                # call replaceChar
+    pushq %r13                                      # save the second pstring
+    call replaceChar                                # call replaceChar
 
+    popq %r13                                       # pop the second pstring
     movq %r13, %rdi                                 # move the first argument to rdi
-    movq old_char, %rsi                            # move the address of old_char to rsi
-    movq new_char, %rdx                            # move the address of new_char to rdx
+    movzbq old_char, %rsi                             # move the address of old_char to rsi
+    movzbq new_char, %rdx                             # move the address of new_char to rdx
+    pushq %rax                                      # push the return value from the first call to the stack
     movq $0, %rax
-#    call replaceChar                                # call replaceChar
+    call replaceChar                                # call replaceChar
+    movq %rax, %r13                                 # move the return value to r13
 
     movq $format_case_2, %rdi                       # move the format string to rdi
     movq old_char, %rsi                             # move the address of old_char to rsi
     movq new_char, %rdx                             # move the address of new_char to rdx
+    popq %r12                                       # pop the return value from the stack
     movq %r12, %rcx                                 # move the first argument to rcx
     leaq 1(%rcx), %rcx                              # start printing from the second byte
     movq %r13, %r8                                  # move the second argument to r8
@@ -111,8 +116,8 @@ run_func:
 
     movq %r12, %rdi                                 # move the address of r12 to rdi
     movq %r13, %rsi                                 # move the address of r13 to rsi
-    movzb start_idx, %rdx                            # move the address of start_idx to rdx
-    movzb end_idx, %rcx                              # move the address of end_idx to rcx
+    movzb start_idx, %rdx                           # move the address of start_idx to rdx
+    movzb end_idx, %rcx                             # move the address of end_idx to rcx
     movq $0, %rax
 #    call pstrijcpy                                  # call pstrijcpy
 
@@ -126,12 +131,12 @@ run_func:
     jmp .L7                                         # jump to the end of the function
 
     .L4:                                            # case 4
-    leaq %r12, %rdi                                 # move the address of r12 to rdi
+    movq %r12, %rdi                                 # move the address of r12 to rdi
     movq $0, %rax
 #    call swapCase                                    # call swapCase
     movq %rax, %r12                                 # move the return value to r12
 
-    leaq %r13, %rdi                                 # move the address of r13 to rdi
+    movq %r13, %rdi                                 # move the address of r13 to rdi
     movq $0, %rax
 #    call swapCase                                    # call swapCase
     movq %rax, %r13                                 # move the return value to r13
@@ -167,8 +172,8 @@ run_func:
 
     movq %r12, %rdi                                 # move the address of r12 to rdi
     movq %r13, %rsi                                 # move the address of r13 to rsi
-    movzb start_idx, %rdx                            # move the address of start_idx to rdx
-    movzb end_idx, %rcx                              # move the address of end_idx to rcx
+    movzb start_idx, %rdx                           # move the address of start_idx to rdx
+    movzb end_idx, %rcx                             # move the address of end_idx to rcx
     movq $0, %rax
 #        call pstrijcmp                                  # call pstrijcmp
     movq %rax, %r14                                 # move the return value to r14
