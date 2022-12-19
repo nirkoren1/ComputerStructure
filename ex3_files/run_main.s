@@ -13,7 +13,7 @@ size_1: .byte 0                                    # size of the first string
 string_1: .space 256                               # pointer to the first struct
 size_2: .byte 0                                    # size of the second string
 string_2: .space 256                               # pointer to the second struct# option in the menu
-option: .int 0
+option: .long 0
 
 
     .text
@@ -53,14 +53,8 @@ run_main:
     movq $0, %rax                                  # set the return value to 0
     call scanf                                     # call scanf to scan the option from the menu
 
-    movzb size_1(%rip), %rdx                       # set the rdx register to the address of the size of the first string
-    leaq format_i_print(%rip), %rdi                # set the rsi register to the address of the format for printing integers
-    movq %rdx, %rsi                                # set the rdi register to the address of the size of the first string
-    movq $0, %rax                                  # set the return value to 0
-    call printf                                    # call printf to print the size of the first string
-
-    leaq size_1(%rip), %rsi                        # set the first argument for run_func
-    leaq size_2(%rip), %rdi                        # set the second argument for run_func
+    leaq size_1(%rip), %rdi                        # set the first argument for run_func
+    leaq size_2(%rip), %rsi                        # set the second argument for run_func
     movq option(%rip), %rdx                        # set the third argument for run_func
     movq $0, %rax                                  # set the return value to 0
     call run_func                                  # call run_func

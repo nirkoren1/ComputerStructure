@@ -9,4 +9,7 @@ include_directories(ex1_files)
 
 add_executable(ComputerStructure
         ex3_files/main.c
-        ex3_files/run_main.s)
+        ex3_files/run_main.s
+        ex3_files/func_select.s
+        ex3_files/pstring.s
+        ex3_files/pstring.h)
