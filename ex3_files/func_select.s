@@ -5,6 +5,8 @@ invalid_option: .string "invalid option!\n"
 format_case_1: .string "first pstring length: %d, second pstring length: %d\n"
 format_case_2: .string "old char: %c, new char: %c, first string: %s, second string: %s\n"
 format_case_3: .string "length: %d, string: %s\n"
+format_case_4: .string "length: %d, string: %s\n"
+format_case_5: .string "compare result: %d\n"
     .align 8
     .L10:
     .quad .L1
@@ -116,14 +118,67 @@ run_func:
 
     movq $format_case_3, %rdi                       # move the format string to rdi
     movq %r12, %rsi                                 # move the address of r12 to rsi
-    movq %rax, %rdx                                 # move the return value to rdx
+    movzb (%rsi), %rsi                              # get the length of the string which is the first byte of the rsi points to
+    movq %r12, %rdx                                 # move the address of r12 to rdx
     leaq 1(%rdx), %rdx                              # start printing from the second byte
     movq $0, %rax
     call printf                                     # call printf
     jmp .L7                                         # jump to the end of the function
 
     .L4:                                            # case 4
+    leaq %r12, %rdi                                 # move the address of r12 to rdi
+    movq $0, %rax
+#    call swapCase                                    # call swapCase
+    movq %rax, %r12                                 # move the return value to r12
+
+    leaq %r13, %rdi                                 # move the address of r13 to rdi
+    movq $0, %rax
+#    call swapCase                                    # call swapCase
+    movq %rax, %r13                                 # move the return value to r13
+
+    movq $format_case_4, %rdi                       # move the format string to rdi
+    movq %r12, %rsi                                 # move the address of r12 to rsi
+    movzb (%rsi), %rsi                              # get the length of the string which is the first byte of the rsi points to
+    movq %r12, %rdx                                 # move the address of r12 to rdx
+    leaq 1(%rdx), %rdx                              # start printing from the second byte
+    movq $0, %rax
+    call printf                                     # call printf
+
+    movq $format_case_4, %rdi                       # move the format string to rdi
+    movq %r13, %rsi                                 # move the address of r13 to rsi
+    movzb (%rsi), %rsi                              # get the length of the string which is the first byte of the rsi points to
+    movq %r13, %rdx                                 # move the address of r13 to rdx
+    leaq 1(%rdx), %rdx                              # start printing from the second byte
+    movq $0, %rax
+    call printf                                     # call printf
+    jmp .L7                                         # jump to the end of the function
+
     .L5:                                            # case 5
+    leaq format_scan_i(%rip), %rdi                  # move the format string to rdi
+    leaq start_idx(%rip), %rsi                      # move the address of start_idx to rsi
+    movq $0, %rax
+    call scanf                                      # call scanf
+    movq %rsi, start_idx                            # move the return value to start_idx
+
+    leaq format_scan_i(%rip), %rdi                  # move the format string to rdi
+    leaq end_idx(%rip), %rsi                        # move the address of end_idx to rsi
+    movq $0, %rax
+    call scanf                                      # call scanf
+
+    movq %r12, %rdi                                 # move the address of r12 to rdi
+    movq %r13, %rsi                                 # move the address of r13 to rsi
+    movzb start_idx, %rdx                            # move the address of start_idx to rdx
+    movzb end_idx, %rcx                              # move the address of end_idx to rcx
+    movq $0, %rax
+#        call pstrijcmp                                  # call pstrijcmp
+    movq %rax, %r14                                 # move the return value to r14
+
+    movq $format_case_5, %rdi                       # move the format string to rdi
+    movq %r14, %rsi                                 # move the address of r14 to rsi
+    movq $0, %rax
+    call printf                                     # call printf
+    jmp .L7                                         # jump to the end of the function
+
 
     .L7:                                            # end of the function
     leave                                           # restore the frame pointer
