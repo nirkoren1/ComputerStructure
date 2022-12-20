@@ -12,7 +12,7 @@ format_case_5: .string "compare result: %d\n"
     .quad .L1
     .quad .L2
     .quad .L2
-    .quad .L2
+    .quad .L6
     .quad .L3
     .quad .L4
     .quad .L5
@@ -107,7 +107,6 @@ run_func:
     leaq start_idx(%rip), %rsi                      # move the address of start_idx to rsi
     movq $0, %rax
     call scanf                                      # call scanf
-    movq %rsi, start_idx                            # move the return value to start_idx
 
     leaq format_scan_i(%rip), %rdi                  # move the format string to rdi
     leaq end_idx(%rip), %rsi                        # move the address of end_idx to rsi
@@ -119,7 +118,8 @@ run_func:
     movzb start_idx, %rdx                           # move the address of start_idx to rdx
     movzb end_idx, %rcx                             # move the address of end_idx to rcx
     movq $0, %rax
-#    call pstrijcpy                                  # call pstrijcpy
+    call pstrijcpy                                  # call pstrijcpy
+    movq %rax, %r12                                 # move the return value to r12
 
     movq $format_case_3, %rdi                       # move the format string to rdi
     movq %r12, %rsi                                 # move the address of r12 to rsi
