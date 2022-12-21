@@ -119,13 +119,23 @@ run_func:
     movzb start_idx, %rdx                           # move the address of start_idx to rdx
     movzb end_idx, %rcx                             # move the address of end_idx to rcx
     movq $0, %rax
+    pushq %r13                                      # save the second pstring
     call pstrijcpy                                  # call pstrijcpy
+    popq %r13                                       # pop the second pstring
     movq %rax, %r12                                 # move the return value to r12
 
     movq $format_case_3, %rdi                       # move the format string to rdi
     movq %r12, %rsi                                 # move the address of r12 to rsi
     movzb (%rsi), %rsi                              # get the length of the string which is the first byte of the rsi points to
     movq %r12, %rdx                                 # move the address of r12 to rdx
+    leaq 1(%rdx), %rdx                              # start printing from the second byte
+    movq $0, %rax
+    call printf                                     # call printf
+
+    movq $format_case_3, %rdi                       # move the format string to rdi
+    movq %r13, %rsi                                 # move the address of r13 to rsi
+    movzb (%rsi), %rsi                              # get the length of the string which is the first byte of the rsi points to
+    movq %r13, %rdx                                 # move the address of r13 to rdx
     leaq 1(%rdx), %rdx                              # start printing from the second byte
     movq $0, %rax
     call printf                                     # call printf
