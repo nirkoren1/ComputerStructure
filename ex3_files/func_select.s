@@ -1,3 +1,4 @@
+# Nir Koren 316443902
     .section .rodata
 format_scan_c: .string "%s"
 format_scan_i: .string "%d"
@@ -133,14 +134,16 @@ run_func:
     .L4:                                            # case 4
     movq %r12, %rdi                                 # move the address of r12 to rdi
     movq $0, %rax
-#    call swapCase                                    # call swapCase
+    call swapCase                                    # call swapCase
     movq %rax, %r12                                 # move the return value to r12
+    pushq %r12                                      # push the return value to the stack
 
     movq %r13, %rdi                                 # move the address of r13 to rdi
     movq $0, %rax
-#    call swapCase                                    # call swapCase
+    call swapCase                                    # call swapCase
     movq %rax, %r13                                 # move the return value to r13
 
+    popq %r12                                       # pop the return value from the stack
     movq $format_case_4, %rdi                       # move the format string to rdi
     movq %r12, %rsi                                 # move the address of r12 to rsi
     movzb (%rsi), %rsi                              # get the length of the string which is the first byte of the rsi points to
@@ -175,7 +178,7 @@ run_func:
     movzb start_idx, %rdx                           # move the address of start_idx to rdx
     movzb end_idx, %rcx                             # move the address of end_idx to rcx
     movq $0, %rax
-#        call pstrijcmp                                  # call pstrijcmp
+    call pstrijcmp                                  # call pstrijcmp
     movq %rax, %r14                                 # move the return value to r14
 
     movq $format_case_5, %rdi                       # move the format string to rdi
