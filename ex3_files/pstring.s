@@ -208,7 +208,7 @@ pstrijcmp:
         movzb (%rbp), %r9                   # get the current char of the second pstring
         cmpb %r8b, %r9b                     # compare them
         je .loop4                           # loop
-        jl .done_plus1                      # if the first char is less, jump to done_plus1
+        jg .done_plus1                      # if the first char is greater, jump to done_plus1
         jmp .done_minus1                    # otherwise, jump to done_minus1
     .error2:
         movq $error_message1, %rdi          # set the error message
