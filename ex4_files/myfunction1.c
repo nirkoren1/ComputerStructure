@@ -97,13 +97,14 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
 			for(jj = lowerBoundJJ ; jj <= upperBoundJJ ; jj++) {
 				// check if smaller than min or higher than max and update
 				loop_pixel = src[iiCounter + jj];
-				if ((((int) loop_pixel.red) + ((int) loop_pixel.green) + ((int) loop_pixel.blue)) <= min_intensity) {
-					min_intensity = (((int) loop_pixel.red) + ((int) loop_pixel.green) + ((int) loop_pixel.blue));
+                int intensity = ((int) loop_pixel.red) + ((int) loop_pixel.green) + ((int) loop_pixel.blue);
+				if (intensity <= min_intensity) {
+					min_intensity = intensity;
 					min_row = ii;
 					min_col = jj;
 				}
-				if ((((int) loop_pixel.red) + ((int) loop_pixel.green) + ((int) loop_pixel.blue)) > max_intensity) {
-					max_intensity = (((int) loop_pixel.red) + ((int) loop_pixel.green) + ((int) loop_pixel.blue));
+				if (intensity > max_intensity) {
+					max_intensity = intensity;
 					max_row = ii;
 					max_col = jj;
 				}
