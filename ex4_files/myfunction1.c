@@ -133,14 +133,13 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
     int upper_limit = dim - kernelSize / 2;
     int lower_limit = kernelSize / 2;
     int iDimCounter = lower_limit * dim;
-    int leap = &(dst[iDimCounter + dim + lower_limit]) - &(dst[iDimCounter + upper_limit - 1]);
+    int leap = &(dst[iDimCounter + dim + lower_limit]) - &(dst[iDimCounter + upper_limit]);
     pixel *current_pixel = &(dst[iDimCounter + lower_limit]);
 	for (i = lower_limit ; i < upper_limit ; i++) {
 		for (j =  lower_limit ; j < upper_limit ; j++) {
             *current_pixel = applyKernel(dim, i, j, src, kernelSize, kernel, kernelScale, filter);
             current_pixel++;
 		}
-        current_pixel--;
         current_pixel += leap;
 	}
 }
