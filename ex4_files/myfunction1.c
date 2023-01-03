@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include "myfunction1.h"
 #include "showBMP.h"
+#include <stdio.h>
 /*
  * initialize_pixel_sum - Initializes all fields of sum to 0
  */
@@ -55,10 +56,10 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
 
 	initialize_pixel_sum(&sum);
 
-    int upperBoundII = min(i + 1, dim - 1);
-    int upperBoundJJ = min(j + 1, dim - 1);
-    int lowerBoundII = max(i - 1, 0);
-    int lowerBoundJJ = max(j - 1, 0);
+    int upperBoundII = i + 1;
+    int upperBoundJJ = j + 1;
+    int lowerBoundII = i - 1;
+    int lowerBoundJJ = j - 1;
 
     int iiCounter = lowerBoundII * dim;
 	for(ii = lowerBoundII ; ii <= upperBoundII ; ii++) {
@@ -132,11 +133,15 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
     int upper_limit = dim - kernelSize / 2;
     int lower_limit = kernelSize / 2;
     int iDimCounter = lower_limit * dim;
+    int leap = &(dst[iDimCounter + dim + lower_limit]) - &(dst[iDimCounter + upper_limit - 1]);
+    pixel *current_pixel = &(dst[iDimCounter + lower_limit]);
 	for (i = lower_limit ; i < upper_limit ; i++) {
 		for (j =  lower_limit ; j < upper_limit ; j++) {
-			dst[iDimCounter + j] = applyKernel(dim, i, j, src, kernelSize, kernel, kernelScale, filter);
+            *current_pixel = applyKernel(dim, i, j, src, kernelSize, kernel, kernelScale, filter);
+            current_pixel++;
 		}
-        iDimCounter += dim;
+        current_pixel--;
+        current_pixel += leap;
 	}
 }
 

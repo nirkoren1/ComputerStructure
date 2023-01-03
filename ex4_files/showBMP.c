@@ -80,10 +80,10 @@ void optimize(Image* image, char flag) {
 	getrusage(RUSAGE_SELF, &ru); // start timer
 	startTime = ru.ru_utime;
 
-    for (int i = 0; i < 300; ++i) {
+//    for (int i = 0; i < 300; ++i) {
 
 	myfunction(image, picName, blurRsltImgName, sharpRsltImgName, rowBlurRsltImgName, rowSharpRsltImgName, filteredBlurRsltImgName, filteredSharpRsltImgName, flag);
-    }
+//    }
 
 	getrusage(RUSAGE_SELF, &ru); // end timer
 	endTime = ru.ru_utime;
