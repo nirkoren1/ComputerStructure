@@ -14,10 +14,10 @@ HEADERS = $(shell echo ../include/*.h *.h)
 OBJECTS = $(SOURCES:.c=.o)
 
 showBMP: $(OBJECTS)
-	$(CC) -pg -o  $@ $(OBJECTS) $(LDLIBS)
+	$(CC) -o  $@ $(OBJECTS) $(LDLIBS)
 
 .c.o:
-	$(CC) $(CFLAGS) -pg -c $<
+	$(CC) $(CFLAGS) -c $<
 
 clean:
 	@rm -f $(OBJECTS) showBMP
