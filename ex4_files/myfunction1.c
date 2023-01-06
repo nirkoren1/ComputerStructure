@@ -23,9 +23,9 @@ static void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum, int kernelS
 	sum.blue = sum.blue / kernelScale;
 
 	// truncate each pixel's color values to match the range [0,255]
-	current_pixel->red = (unsigned char) (min(max(sum.red, 0), 255));
-	current_pixel->green = (unsigned char) (min(max(sum.green, 0), 255));
-	current_pixel->blue = (unsigned char) (min(max(sum.blue, 0), 255));
+	current_pixel->red = (min(max(sum.red, 0), 255));
+	current_pixel->green = (min(max(sum.green, 0), 255));
+	current_pixel->blue = (min(max(sum.blue, 0), 255));
 	return;
 }
 
