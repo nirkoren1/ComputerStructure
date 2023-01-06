@@ -61,8 +61,11 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
     int lowerBoundII = i - 1;
     int lowerBoundJJ = j - 1;
 
-    int iiCounter = lowerBoundII * dim;
-	for(ii = lowerBoundII ; ii <= upperBoundII ; ii++) {
+
+//    int iiCounter = lowerBoundII * dim;
+    int iiCounter;
+    pixel *srcPtr = &(src[calcIndex(lowerBoundII, lowerBoundJJ, dim)]);
+    for(ii = lowerBoundII ; ii <= upperBoundII ; ii++) {
 		for(jj = lowerBoundJJ ; jj <= upperBoundJJ ; jj++) {
 
 			int kRow, kCol;
@@ -86,18 +89,23 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
 			}
 
 			// apply kernel on pixel at [ii,jj]
-			sum_pixels_by_weight(&sum, src[iiCounter + jj], kernel[kRow][kCol]);
+//			sum_pixels_by_weight(&sum, src[iiCounter + jj], kernel[kRow][kCol]);
+			sum_pixels_by_weight(&sum, *srcPtr, kernel[kRow][kCol]);
+            srcPtr++;
 		}
-        iiCounter += dim;
+        srcPtr += dim - 3;
+//        iiCounter += dim;
 	}
 
 	if (filter) {
 		// find min and max coordinates
         iiCounter = lowerBoundII * dim;
+        srcPtr = &(src[calcIndex(lowerBoundII, lowerBoundJJ, dim)]);
 		for(ii = lowerBoundII ; ii <= upperBoundII ; ii++) {
 			for(jj = lowerBoundJJ ; jj <= upperBoundJJ ; jj++) {
 				// check if smaller than min or higher than max and update
-				loop_pixel = src[iiCounter + jj];
+//				loop_pixel = src[iiCounter + jj];
+				loop_pixel = *srcPtr;
                 int intensity = ((int) loop_pixel.red) + ((int) loop_pixel.green) + ((int) loop_pixel.blue);
 				if (intensity <= min_intensity) {
 					min_intensity = intensity;
@@ -109,8 +117,10 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
 					max_row = ii;
 					max_col = jj;
 				}
+                srcPtr++;
 			}
-            iiCounter += dim;
+//            iiCounter += dim;
+            srcPtr += dim - 3;
 		}
 		// filter out min and max
 		sum_pixels_by_weight(&sum, src[calcIndex(min_row, min_col, dim)], -1);
@@ -121,6 +131,7 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
 	assign_sum_to_pixel(&current_pixel, sum, kernelScale);
 	return current_pixel;
 }
+
 
 /*
 * Apply the kernel over each pixel.
@@ -136,13 +147,13 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
     int leap = &(dst[iDimCounter + dim + lower_limit]) - &(dst[iDimCounter + upper_limit]);
     int size = sizeof(pixel);
     int sizeLeap = leap * size;
-//    printf("sizeLeap: %d", sizeLeap);
+
+
     pixel *current_pixel = &(dst[iDimCounter + lower_limit]);
 	for (i = lower_limit ; i < upper_limit ; i++) {
 		for (j =  lower_limit ; j < upper_limit ; j++) {
             *current_pixel = applyKernel(dim, i, j, src, kernelSize, kernel, kernelScale, filter);
             current_pixel = (void *) ((char *) current_pixel + size);
-//            printf("current_pixel: %p ", current_pixel);
 		}
         current_pixel = (void *) ((char *) current_pixel + sizeLeap);
 	}
