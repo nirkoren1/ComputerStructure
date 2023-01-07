@@ -197,7 +197,7 @@ static pixel applyKernel2(int dim, int i, int j, pixel *src, const pixel *srcRow
     return current_pixel;
 }
 
-pixel applyKernel3x3(int dim, int i, int j, pixel *src, int ker1, int ker2, int ker3, int ker4, int ker5, int ker6, int ker7, int ker8, int ker9 , int kernelSize, int kernelScale, bool filter) {
+static pixel applyKernel3x3(int dim, int i, int j, pixel *src, int ker1, int ker2, int ker3, int ker4, int ker5, int ker6, int ker7, int ker8, int ker9 , int kernelSize, int kernelScale, bool filter) {
 
     int ii, jj;
     int currRow, currCol;
@@ -210,8 +210,6 @@ pixel applyKernel3x3(int dim, int i, int j, pixel *src, int ker1, int ker2, int 
 
     initialize_pixel_sum(&sum);
 
-    int upperBoundII = i + 1;
-    int upperBoundJJ = j + 1;
     int lowerBoundII = i - 1;
     int lowerBoundJJ = j - 1;
 
@@ -239,6 +237,8 @@ pixel applyKernel3x3(int dim, int i, int j, pixel *src, int ker1, int ker2, int 
 
     if (filter) {
         // find min and max coordinates
+        int upperBoundII = i + 1;
+        int upperBoundJJ = j + 1;
         iiCounter = lowerBoundII * dim;
         srcPtr = &(src[calcIndex(lowerBoundII, lowerBoundJJ, dim)]);
         for(ii = lowerBoundII ; ii <= upperBoundII ; ii++) {
