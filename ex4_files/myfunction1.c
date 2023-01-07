@@ -56,8 +56,6 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
 
     initialize_pixel_sum(&sum);
 
-    int upperBoundII = i + 1;
-    int upperBoundJJ = j + 1;
     int lowerBoundII = i - 1;
     int lowerBoundJJ = j - 1;
 
@@ -65,32 +63,32 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
 //    int iiCounter = lowerBoundII * dim;
     int iiCounter;
     pixel *srcPtr = &(src[calcIndex(lowerBoundII, lowerBoundJJ, dim)]);
-    for(ii = lowerBoundII ; ii <= upperBoundII ; ii++) {
-        for(jj = lowerBoundJJ ; jj <= upperBoundJJ ; jj++) {
+    for(ii = 0 ; ii <= 2 ; ii++) {
+        for(jj = 0 ; jj <= 2 ; jj++) {
 
-            int kRow, kCol;
-
-            // compute row index in kernel
-            if (ii < i) {
-                kRow = 0;
-            } else if (ii > i) {
-                kRow = 2;
-            } else {
-                kRow = 1;
-            }
-
-            // compute column index in kernel
-            if (jj < j) {
-                kCol = 0;
-            } else if (jj > j) {
-                kCol = 2;
-            } else {
-                kCol = 1;
-            }
+//            int kRow, kCol;
+//
+//            // compute row index in kernel
+//            if (ii < i) {
+//                kRow = 0;
+//            } else if (ii > i) {
+//                kRow = 2;
+//            } else {
+//                kRow = 1;
+//            }
+//
+//            // compute column index in kernel
+//            if (jj < j) {
+//                kCol = 0;
+//            } else if (jj > j) {
+//                kCol = 2;
+//            } else {
+//                kCol = 1;
+//            }
 
             // apply kernel on pixel at [ii,jj]
 //			sum_pixels_by_weight(&sum, src[iiCounter + jj], kernel[kRow][kCol]);
-            sum_pixels_by_weight(&sum, *srcPtr, kernel[kRow][kCol]);
+            sum_pixels_by_weight(&sum, *srcPtr, kernel[ii][jj]);
             srcPtr++;
         }
         srcPtr += dim - 3;
@@ -99,6 +97,8 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
 
     if (filter) {
         // find min and max coordinates
+        int upperBoundII = i + 1;
+        int upperBoundJJ = j + 1;
         iiCounter = lowerBoundII * dim;
         srcPtr = &(src[calcIndex(lowerBoundII, lowerBoundJJ, dim)]);
         for(ii = lowerBoundII ; ii <= upperBoundII ; ii++) {
@@ -291,22 +291,22 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
 //
 //    }
 
-    register int ker1 = kernel[0][0];
-    register int ker2 = kernel[0][1];
-    register int ker3 = kernel[0][2];
-    register int ker4 = kernel[1][0];
-    register int ker5 = kernel[1][1];
-    register int ker6 = kernel[1][2];
-    register int ker7 = kernel[2][0];
-    register int ker8 = kernel[2][1];
-    register int ker9 = kernel[2][2];
+//    register int ker1 = kernel[0][0];
+//    register int ker2 = kernel[0][1];
+//    register int ker3 = kernel[0][2];
+//    register int ker4 = kernel[1][0];
+//    register int ker5 = kernel[1][1];
+//    register int ker6 = kernel[1][2];
+//    register int ker7 = kernel[2][0];
+//    register int ker8 = kernel[2][1];
+//    register int ker9 = kernel[2][2];
 
 
     pixel *current_pixel = &(dst[iDimCounter + lower_limit]);
     for (i = lower_limit ; i < upper_limit ; i++) {
         for (j =  lower_limit ; j < upper_limit ; j++) {
-//            *current_pixel = applyKernel(dim, i, j, src, kernelSize, kernel, kernelScale, filter);
-            *current_pixel = applyKernel3x3(dim, i, j, src, ker1, ker2, ker3, ker4, ker5, ker6, ker7, ker8, ker9, kernelSize, kernelScale, filter);
+            *current_pixel = applyKernel(dim, i, j, src, kernelSize, kernel, kernelScale, filter);
+//            *current_pixel = applyKernel3x3(dim, i, j, src, ker1, ker2, ker3, ker4, ker5, ker6, ker7, ker8, ker9, kernelSize, kernelScale, filter);
 //            *current_pixel = applyKernel2(dim, i, j, src, srcPtrRow1, srcPtrRow2, srcPtrRow3, kernelSize, kernel, kernelScale, filter);
             current_pixel = (void *) ((char *) current_pixel + size);
         }
