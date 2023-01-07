@@ -72,5 +72,5 @@ void myfunction(Image *image, char* srcImgpName, char* blurRsltImgName, char* sh
 		// write result image to file
 		writeBMP(image, srcImgpName, filteredSharpRsltImgName);	
 	}
-}
+};
 
