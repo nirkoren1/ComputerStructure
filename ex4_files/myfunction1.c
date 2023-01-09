@@ -70,35 +70,43 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
 
 
     pixel *srcPtr = &(src[calcIndex(lowerBoundII, lowerBoundJJ, dim)]);
-    for(ii = lowerBoundII ; ii <= upperBoundII ; ii++) {
-        for(jj = lowerBoundJJ ; jj <= upperBoundJJ ; jj++) {
-
-            int kRow, kCol;
-
-            // compute row index in kernel
-            if (ii < i) {
-                kRow = 0;
-            } else if (ii > i) {
-                kRow = 2;
-            } else {
-                kRow = 1;
-            }
-
-            // compute column index in kernel
-            if (jj < j) {
-                kCol = 0;
-            } else if (jj > j) {
-                kCol = 2;
-            } else {
-                kCol = 1;
-            }
-
+    for(ii = 0 ; ii <= 2 ; ii++) {
+        for(jj = 0 ; jj <= 2 ; jj++) {
             // apply kernel on pixel at [ii,jj]
-            sum_pixels_by_weight(&sum, *srcPtr, kernel[kRow][kCol]);
+            sum_pixels_by_weight(&sum, *srcPtr, kernel[ii][jj]);
             srcPtr++;
         }
         srcPtr += dim - 3;
     }
+//    for(ii = lowerBoundII ; ii <= upperBoundII ; ii++) {
+//        for(jj = lowerBoundJJ ; jj <= upperBoundJJ ; jj++) {
+//
+//            int kRow, kCol;
+//
+//            // compute row index in kernel
+//            if (ii < i) {
+//                kRow = 0;
+//            } else if (ii > i) {
+//                kRow = 2;
+//            } else {
+//                kRow = 1;
+//            }
+//
+//            // compute column index in kernel
+//            if (jj < j) {
+//                kCol = 0;
+//            } else if (jj > j) {
+//                kCol = 2;
+//            } else {
+//                kCol = 1;
+//            }
+//
+//            // apply kernel on pixel at [ii,jj]
+//            sum_pixels_by_weight(&sum, *srcPtr, kernel[kRow][kCol]);
+//            srcPtr++;
+//        }
+//        srcPtr += dim - 3;
+//    }
     if (!filter) {
         // assign kernel's result to pixel at [i,j]
         assign_sum_to_pixel(&current_pixel, sum, kernelScale, blur);
