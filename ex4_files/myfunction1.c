@@ -50,7 +50,7 @@ static void sum_pixels_by_weight(pixel_sum *sum, pixel p, int weight) {
 /*
  *  Applies kernel for pixel at (i,j)
  */
-static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
+static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int *kernelPtr, int kernelScale, bool filter, bool blur) {
 
 //    int currRow, currCol;
     pixel_sum sum;
@@ -70,7 +70,7 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
 
 
     register pixel *srcPtr = &(src[calcIndex(lowerBoundII, lowerBoundJJ, dim)]);
-    register int *kernelPtr = &(kernel[0][0]);
+//    register int *kernelPtr = &(kernel[0][0]);
     for(ii = 0 ; ii <= 2 ; ii++) {
         for(jj = 0 ; jj <= 2 ; jj++) {
             // apply kernel on pixel at [ii,jj]
