@@ -103,8 +103,8 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
     if (filter) {
         // find min and max coordinates
         srcPtr -= dim * 3;
-        for(ii = lowerBoundII ; ii <= upperBoundII ; ii++) {
-            for(jj = lowerBoundJJ ; jj <= upperBoundJJ ; jj++) {
+        for(ii = 0 ; ii <= 2 ; ii++) {
+            for(jj = 0 ; jj <= 2 ; jj++) {
                 // check if smaller than min or higher than max and update
                 loop_pixel = *srcPtr;
                 int intensity = ((int) loop_pixel.red) + ((int) loop_pixel.green) + ((int) loop_pixel.blue);
@@ -122,9 +122,10 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
             }
             srcPtr += dim - 3;
         }
+        srcPtr -= dim * 3;
         // filter out min and max
-        sum_pixels_by_weight(&sum, src[calcIndex(min_row, min_col, dim)], -1);
-        sum_pixels_by_weight(&sum, src[calcIndex(max_row, max_col, dim)], -1);
+        sum_pixels_by_weight(&sum, *(srcPtr + dim * min_row + min_col), -1);
+        sum_pixels_by_weight(&sum, *(srcPtr + dim * max_row + max_col), -1);
     }
 
     // assign kernel's result to pixel at [i,j]
