@@ -74,21 +74,10 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
         for(jj = 0 ; jj <= 2 ; jj++) {
             // apply kernel on pixel at [ii,jj]
             sum_pixels_by_weight(&sum, *srcPtr, kernel[ii][jj]);
-            srcPtr++;
-        }
-        srcPtr += dim - 3;
-    }
-    if (!filter) {
-        // assign kernel's result to pixel at [i,j]
-        assign_sum_to_pixel(&current_pixel, sum, kernelScale, blur);
-        return current_pixel;
-    }
-
-    // find min and max coordinates
-    srcPtr -= dim * 3;
-    for(ii = 0 ; ii <= 2 ; ii++) {
-        for(jj = 0 ; jj <= 2 ; jj++) {
-            // check if smaller than min or higher than max and update
+            if (!filter) {
+                srcPtr++;
+                continue;
+            }
             loop_pixel = *srcPtr;
             int intensity = ((int) loop_pixel.red) + ((int) loop_pixel.green) + ((int) loop_pixel.blue);
             if (intensity <= min_intensity) {
@@ -105,6 +94,33 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
         }
         srcPtr += dim - 3;
     }
+    if (!filter) {
+        // assign kernel's result to pixel at [i,j]
+        assign_sum_to_pixel(&current_pixel, sum, kernelScale, blur);
+        return current_pixel;
+    }
+
+    // find min and max coordinates
+//    srcPtr -= dim * 3;
+//    for(ii = 0 ; ii <= 2 ; ii++) {
+//        for(jj = 0 ; jj <= 2 ; jj++) {
+//            // check if smaller than min or higher than max and update
+//            loop_pixel = *srcPtr;
+//            int intensity = ((int) loop_pixel.red) + ((int) loop_pixel.green) + ((int) loop_pixel.blue);
+//            if (intensity <= min_intensity) {
+//                min_intensity = intensity;
+//                min_row = ii;
+//                min_col = jj;
+//            }
+//            if (intensity > max_intensity) {
+//                max_intensity = intensity;
+//                max_row = ii;
+//                max_col = jj;
+//            }
+//            srcPtr++;
+//        }
+//        srcPtr += dim - 3;
+//    }
     srcPtr -= dim * 3;
     // filter out min and max
     sum_pixels_by_weight(&sum, *(srcPtr + dim * min_row + min_col), -1);
@@ -165,7 +181,7 @@ static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, i
             }
             srcPtr++;
         }
-//        srcPtr += dim - 3;
+        srcPtr += dim - 3;
     }
     srcPtr -= dim * 3;
     // filter out min and max
