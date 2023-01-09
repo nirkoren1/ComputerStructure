@@ -104,6 +104,13 @@ def main():
             print(f"Param: {param} Average runtime: {average:.3f}")
 
     print()
+    # print average of averages runtimes
+    sum_of_averages = 0
+    for full_path, timings in RESULTS.items():
+        for param, timing in timings.items():
+            average = sum(timing) / RUN_COUNT
+            sum_of_averages += average
+    print(f"Average of averages: {sum_of_averages / (len(ORIGINAL_FILES) * len(PARAMS)):.3f}")
 
     if HOST != TEST_SERVER:
         print_with_emoji(f"❗ Not uploading results because not running on {TEST_SERVER}")

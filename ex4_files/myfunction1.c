@@ -56,49 +56,46 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
 
     initialize_pixel_sum(&sum);
 
+    int upperBoundII = i + 1;
+    int upperBoundJJ = j + 1;
     int lowerBoundII = i - 1;
     int lowerBoundJJ = j - 1;
 
 
-//    int iiCounter = lowerBoundII * dim;
     int iiCounter;
     pixel *srcPtr = &(src[calcIndex(lowerBoundII, lowerBoundJJ, dim)]);
-    for(ii = 0 ; ii <= 2 ; ii++) {
-        for(jj = 0 ; jj <= 2 ; jj++) {
+    for(ii = lowerBoundII ; ii <= upperBoundII ; ii++) {
+        for(jj = lowerBoundJJ ; jj <= upperBoundJJ ; jj++) {
 
-//            int kRow, kCol;
-//
-//            // compute row index in kernel
-//            if (ii < i) {
-//                kRow = 0;
-//            } else if (ii > i) {
-//                kRow = 2;
-//            } else {
-//                kRow = 1;
-//            }
-//
-//            // compute column index in kernel
-//            if (jj < j) {
-//                kCol = 0;
-//            } else if (jj > j) {
-//                kCol = 2;
-//            } else {
-//                kCol = 1;
-//            }
+            int kRow, kCol;
+
+            // compute row index in kernel
+            if (ii < i) {
+                kRow = 0;
+            } else if (ii > i) {
+                kRow = 2;
+            } else {
+                kRow = 1;
+            }
+
+            // compute column index in kernel
+            if (jj < j) {
+                kCol = 0;
+            } else if (jj > j) {
+                kCol = 2;
+            } else {
+                kCol = 1;
+            }
 
             // apply kernel on pixel at [ii,jj]
-//			sum_pixels_by_weight(&sum, src[iiCounter + jj], kernel[kRow][kCol]);
-            sum_pixels_by_weight(&sum, *srcPtr, kernel[ii][jj]);
+            sum_pixels_by_weight(&sum, *srcPtr, kernel[kRow][kCol]);
             srcPtr++;
         }
         srcPtr += dim - 3;
-//        iiCounter += dim;
     }
 
     if (filter) {
         // find min and max coordinates
-        int upperBoundII = i + 1;
-        int upperBoundJJ = j + 1;
         iiCounter = lowerBoundII * dim;
         srcPtr = &(src[calcIndex(lowerBoundII, lowerBoundJJ, dim)]);
         for(ii = lowerBoundII ; ii <= upperBoundII ; ii++) {
