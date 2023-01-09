@@ -148,9 +148,12 @@ static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, i
         sum_pixels_by_weight(&sum, *srcPtr, kernel[1][jj]);
         srcPtr++;
     }
+    if (!filter) {
+        // assign kernel's result to pixel at [i,j]
+        assign_sum_to_pixel(&current_pixel, sum, kernelScale);
+        return current_pixel;
+    }
 
-
-    if (filter) {
         // find min and max coordinates
         srcPtr = &(src[calcIndex(lowerBoundII, lowerBoundJJ, dim)]);
         for(ii = lowerBoundII ; ii <= upperBoundII ; ii++) {
@@ -175,7 +178,6 @@ static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, i
         // filter out min and max
         sum_pixels_by_weight(&sum, src[calcIndex(min_row, min_col, dim)], -1);
         sum_pixels_by_weight(&sum, src[calcIndex(max_row, max_col, dim)], -1);
-    }
 
     // assign kernel's result to pixel at [i,j]
     assign_sum_to_pixel(&current_pixel, sum, kernelScale);
