@@ -62,8 +62,8 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
 
     initialize_pixel_sum(&sum);
 
-    int upperBoundII = i + 1;
-    int upperBoundJJ = j + 1;
+//    int upperBoundII = i + 1;
+//    int upperBoundJJ = j + 1;
     int lowerBoundII = i - 1;
     int lowerBoundJJ = j - 1;
     int ii , jj;
@@ -78,35 +78,6 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
         }
         srcPtr += dim - 3;
     }
-//    for(ii = lowerBoundII ; ii <= upperBoundII ; ii++) {
-//        for(jj = lowerBoundJJ ; jj <= upperBoundJJ ; jj++) {
-//
-//            int kRow, kCol;
-//
-//            // compute row index in kernel
-//            if (ii < i) {
-//                kRow = 0;
-//            } else if (ii > i) {
-//                kRow = 2;
-//            } else {
-//                kRow = 1;
-//            }
-//
-//            // compute column index in kernel
-//            if (jj < j) {
-//                kCol = 0;
-//            } else if (jj > j) {
-//                kCol = 2;
-//            } else {
-//                kCol = 1;
-//            }
-//
-//            // apply kernel on pixel at [ii,jj]
-//            sum_pixels_by_weight(&sum, *srcPtr, kernel[kRow][kCol]);
-//            srcPtr++;
-//        }
-//        srcPtr += dim - 3;
-//    }
     if (!filter) {
         // assign kernel's result to pixel at [i,j]
         assign_sum_to_pixel(&current_pixel, sum, kernelScale, blur);
@@ -156,9 +127,9 @@ static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, i
 
     initialize_pixel_sum(&sum);
 
-    int upperBoundII = i + 1;
-    int upperBoundJJ = j + 1;
-    int lowerBoundII = i - 1;
+//    int upperBoundII = i + 1;
+//    int upperBoundJJ = j + 1;
+//    int lowerBoundII = i - 1;
     int lowerBoundJJ = j - 1;
     int ii , jj;
 
@@ -177,8 +148,8 @@ static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, i
 
     // find min and max coordinates
     srcPtr -= 3;
-    for(ii = lowerBoundII ; ii <= upperBoundII ; ii++) {
-        for(jj = lowerBoundJJ ; jj <= upperBoundJJ ; jj++) {
+    for(ii = 0 ; ii <= 2 ; ii++) {
+        for(jj = 0 ; jj <= 2 ; jj++) {
             // check if smaller than min or higher than max and update
             loop_pixel = *srcPtr;
             int intensity = ((int) loop_pixel.red) + ((int) loop_pixel.green) + ((int) loop_pixel.blue);
