@@ -102,7 +102,7 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
 
     if (filter) {
         // find min and max coordinates
-        srcPtr = &(src[calcIndex(lowerBoundII, lowerBoundJJ, dim)]);
+        srcPtr -= dim * 3;
         for(ii = lowerBoundII ; ii <= upperBoundII ; ii++) {
             for(jj = lowerBoundJJ ; jj <= upperBoundJJ ; jj++) {
                 // check if smaller than min or higher than max and update
