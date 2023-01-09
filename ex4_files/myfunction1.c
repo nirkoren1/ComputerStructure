@@ -22,6 +22,9 @@ static void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum, int kernelS
     sum.blue = sum.blue / kernelScale;
 
     // truncate each pixel's color values to match the range [0,255]
+//    current_pixel->red = sum.red;
+//    current_pixel->green = sum.green;
+//    current_pixel->blue =  sum.blue;
 	current_pixel->red = (min(max(sum.red, 0), 255));
 	current_pixel->green = (min(max(sum.green, 0), 255));
 	current_pixel->blue = (min(max(sum.blue, 0), 255));
@@ -206,17 +209,17 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
         for (i = lower_limit; i < upper_limit; i++) {
             for (j = lower_limit; j < upper_limit; j++) {
                 *current_pixel = applyKernel(dim, i, j, src, kernelSize, kernel, kernelScale, filter);
-                current_pixel++;
+                current_pixel = (void *) ((char *) current_pixel + size);
             }
-            current_pixel += leap;
+            current_pixel = (void *) ((char *) current_pixel + sizeLeap);
         }
     } else {
         for (i = lower_limit; i < upper_limit; i++) {
             for (j = lower_limit; j < upper_limit; j++) {
                 *current_pixel = applyKernel1x3(dim, i, j, src, kernelSize, kernel, kernelScale, filter);
-                current_pixel++;
+                current_pixel = (void *) ((char *) current_pixel + size);
             }
-            current_pixel += leap;
+            current_pixel = (void *) ((char *) current_pixel + sizeLeap);
         }
     }
 //    for (i = lower_limit ; i < upper_limit ; i++) {
