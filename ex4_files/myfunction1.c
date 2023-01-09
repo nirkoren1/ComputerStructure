@@ -50,7 +50,7 @@ static void sum_pixels_by_weight(pixel_sum *sum, pixel p, int weight) {
 /*
  *  Applies kernel for pixel at (i,j)
  */
-static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int *kernelPtr, int kernelScale, bool filter, bool blur) {
+static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
 
 //    int currRow, currCol;
     pixel_sum sum;
@@ -69,14 +69,12 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
     int ii , jj;
 
 
-    register pixel *srcPtr = &(src[calcIndex(lowerBoundII, lowerBoundJJ, dim)]);
-//    register int *kernelPtr = &(kernel[0][0]);
+    register pixel *srcPtr = src;
     for(ii = 0 ; ii <= 2 ; ii++) {
         for(jj = 0 ; jj <= 2 ; jj++) {
             // apply kernel on pixel at [ii,jj]
-            sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
+            sum_pixels_by_weight(&sum, *srcPtr, kernel[ii][jj]);
             srcPtr++;
-            kernelPtr++;
         }
         srcPtr += dim - 3;
     }
@@ -118,7 +116,7 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
     return current_pixel;
 }
 
-static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, int *kernel, int kernelScale, bool filter, bool blur) {
+static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
 
     pixel_sum sum;
     pixel current_pixel;
@@ -137,12 +135,10 @@ static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, i
 
 
     register pixel *srcPtr = &(src[calcIndex(i, lowerBoundJJ, dim)]);
-    kernel += 3;
     for(jj = 0 ; jj <= 2 ; jj++) {
         // apply kernel on pixel at [ii,jj]
-        sum_pixels_by_weight(&sum, *srcPtr, *kernel);
+        sum_pixels_by_weight(&sum, *srcPtr, kernel[1][jj]);
         srcPtr++;
-        kernel++;
     }
     if (!filter) {
         // assign kernel's result to pixel at [i,j]
@@ -199,12 +195,15 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
     pixel *current_pixel = &(dst[iDimCounter + lower_limit]);
     // check if the kernel is 1x3 (zeros on above and below)
     if (kernel[0][0] != 0 || kernel[0][1] != 0 || kernel[0][2] != 0 || kernel[2][0] != 0 || kernel[2][1] != 0 || kernel[2][2] != 0) {
+        pixel *srcPtr = &(src[calcIndex(lower_limit - 1, lower_limit - 1, dim)]);
         for (i = lower_limit; i < upper_limit; i++) {
             for (j = lower_limit; j < upper_limit; j++) {
-                *current_pixel = applyKernel(dim, i, j, src, kernelSize, kernel, kernelScale, filter, blur);
+                *current_pixel = applyKernel(dim, i, j, srcPtr, kernelSize, kernel, kernelScale, filter, blur);
                 current_pixel = (void *) ((char *) current_pixel + size);
+                srcPtr++;
             }
             current_pixel = (void *) ((char *) current_pixel + sizeLeap);
+            srcPtr += 2;
         }
     } else {
         for (i = lower_limit; i < upper_limit; i++) {
