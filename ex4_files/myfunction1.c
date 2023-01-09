@@ -69,7 +69,7 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
     int ii , jj;
 
 
-    pixel *srcPtr = &(src[calcIndex(lowerBoundII, lowerBoundJJ, dim)]);
+    register pixel *srcPtr = &(src[calcIndex(lowerBoundII, lowerBoundJJ, dim)]);
     for(ii = 0 ; ii <= 2 ; ii++) {
         for(jj = 0 ; jj <= 2 ; jj++) {
             // apply kernel on pixel at [ii,jj]
@@ -134,7 +134,7 @@ static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, i
     int ii , jj;
 
 
-    pixel *srcPtr = &(src[calcIndex(i, lowerBoundJJ, dim)]);
+    register pixel *srcPtr = &(src[calcIndex(i, lowerBoundJJ, dim)]);
     for(jj = 0 ; jj <= 2 ; jj++) {
         // apply kernel on pixel at [ii,jj]
         sum_pixels_by_weight(&sum, *srcPtr, kernel[1][jj]);
@@ -165,7 +165,7 @@ static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, i
             }
             srcPtr++;
         }
-        srcPtr += dim - 3;
+//        srcPtr += dim - 3;
     }
     srcPtr -= dim * 3;
     // filter out min and max
