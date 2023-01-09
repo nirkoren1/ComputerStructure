@@ -14,7 +14,7 @@ void initialize_pixel_sum(pixel_sum *sum) {
 /*
  * assign_sum_to_pixel - Truncates pixel's new value to match the range [0,255]
  */
-static void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum, int kernelScale) {
+static void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum, int kernelScale, bool blur) {
 
     // divide by kernel's weight
     sum.red = sum.red / kernelScale;
@@ -22,9 +22,13 @@ static void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum, int kernelS
     sum.blue = sum.blue / kernelScale;
 
     // truncate each pixel's color values to match the range [0,255]
-//    current_pixel->red = sum.red;
-//    current_pixel->green = sum.green;
-//    current_pixel->blue =  sum.blue;
+    if (blur) {
+        current_pixel->red = sum.red;
+        current_pixel->green = sum.green;
+        current_pixel->blue = sum.blue;
+        return;
+    }
+
 	current_pixel->red = (min(max(sum.red, 0), 255));
 	current_pixel->green = (min(max(sum.green, 0), 255));
 	current_pixel->blue = (min(max(sum.blue, 0), 255));
@@ -45,7 +49,7 @@ static void sum_pixels_by_weight(pixel_sum *sum, pixel p, int weight) {
 /*
  *  Applies kernel for pixel at (i,j)
  */
-static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter) {
+static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
 
     int currRow, currCol;
     pixel_sum sum;
@@ -123,11 +127,11 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
     }
 
     // assign kernel's result to pixel at [i,j]
-    assign_sum_to_pixel(&current_pixel, sum, kernelScale);
+    assign_sum_to_pixel(&current_pixel, sum, kernelScale, blur);
     return current_pixel;
 }
 
-static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter) {
+static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
 
     pixel_sum sum;
     pixel current_pixel;
@@ -153,7 +157,7 @@ static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, i
     }
     if (!filter) {
         // assign kernel's result to pixel at [i,j]
-        assign_sum_to_pixel(&current_pixel, sum, kernelScale);
+        assign_sum_to_pixel(&current_pixel, sum, kernelScale, blur);
         return current_pixel;
     }
 
@@ -183,7 +187,7 @@ static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, i
     sum_pixels_by_weight(&sum, src[calcIndex(max_row, max_col, dim)], -1);
 
     // assign kernel's result to pixel at [i,j]
-    assign_sum_to_pixel(&current_pixel, sum, kernelScale);
+    assign_sum_to_pixel(&current_pixel, sum, kernelScale, blur);
     return current_pixel;
 }
 
@@ -193,7 +197,7 @@ static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, i
 * Ignore pixels where the kernel exceeds bounds. These are pixels with row index smaller than kernelSize/2 and/or
 * column index smaller than kernelSize/2
 */
-void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter) {
+void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
 
     int i, j;
     int upper_limit = dim - kernelSize / 2;
@@ -208,7 +212,7 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
     if (kernel[0][0] != 0 || kernel[0][1] != 0 || kernel[0][2] != 0 || kernel[2][0] != 0 || kernel[2][1] != 0 || kernel[2][2] != 0) {
         for (i = lower_limit; i < upper_limit; i++) {
             for (j = lower_limit; j < upper_limit; j++) {
-                *current_pixel = applyKernel(dim, i, j, src, kernelSize, kernel, kernelScale, filter);
+                *current_pixel = applyKernel(dim, i, j, src, kernelSize, kernel, kernelScale, filter, blur);
                 current_pixel = (void *) ((char *) current_pixel + size);
             }
             current_pixel = (void *) ((char *) current_pixel + sizeLeap);
@@ -216,7 +220,7 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
     } else {
         for (i = lower_limit; i < upper_limit; i++) {
             for (j = lower_limit; j < upper_limit; j++) {
-                *current_pixel = applyKernel1x3(dim, i, j, src, kernelSize, kernel, kernelScale, filter);
+                *current_pixel = applyKernel1x3(dim, i, j, src, kernelSize, kernel, kernelScale, filter, blur);
                 current_pixel = (void *) ((char *) current_pixel + size);
             }
             current_pixel = (void *) ((char *) current_pixel + sizeLeap);
@@ -284,7 +288,7 @@ void copyPixels(pixel* src, pixel* dst) {
     }
 }
 
-void doConvolution(Image *image, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter) {
+void doConvolution(Image *image, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
 
     pixel* pixelsImg = malloc(m*n*sizeof(pixel));
     pixel* backupOrg = malloc(m*n*sizeof(pixel));
@@ -292,7 +296,7 @@ void doConvolution(Image *image, int kernelSize, int kernel[kernelSize][kernelSi
     charsToPixels(image, pixelsImg);
     copyPixels(pixelsImg, backupOrg);
 
-    smooth(m, backupOrg, pixelsImg, kernelSize, kernel, kernelScale, filter);
+    smooth(m, backupOrg, pixelsImg, kernelSize, kernel, kernelScale, filter, blur);
 
     pixelsToChars(pixelsImg);
 
