@@ -118,7 +118,7 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
     return current_pixel;
 }
 
-static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
+static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, int *kernel, int kernelScale, bool filter, bool blur) {
 
     pixel_sum sum;
     pixel current_pixel;
@@ -137,10 +137,12 @@ static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, i
 
 
     register pixel *srcPtr = &(src[calcIndex(i, lowerBoundJJ, dim)]);
+    kernel += 3;
     for(jj = 0 ; jj <= 2 ; jj++) {
         // apply kernel on pixel at [ii,jj]
-        sum_pixels_by_weight(&sum, *srcPtr, kernel[1][jj]);
+        sum_pixels_by_weight(&sum, *srcPtr, *kernel);
         srcPtr++;
+        kernel++;
     }
     if (!filter) {
         // assign kernel's result to pixel at [i,j]
