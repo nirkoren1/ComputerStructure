@@ -64,8 +64,8 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
 
 //    int upperBoundII = i + 1;
 //    int upperBoundJJ = j + 1;
-    int lowerBoundII = i - 1;
-    int lowerBoundJJ = j - 1;
+//    int lowerBoundII = i - 1;
+//    int lowerBoundJJ = j - 1;
     int ii , jj;
 
 
@@ -206,21 +206,17 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
             srcPtr += 2;
         }
     } else {
+        pixel *srcPtr = &(src[calcIndex(lower_limit, lower_limit - 1, dim)]);
         for (i = lower_limit; i < upper_limit; i++) {
             for (j = lower_limit; j < upper_limit; j++) {
                 *current_pixel = applyKernel1x3(dim, i, j, src, kernelSize, kernel, kernelScale, filter, blur);
                 current_pixel = (void *) ((char *) current_pixel + size);
+                srcPtr++;
             }
             current_pixel = (void *) ((char *) current_pixel + sizeLeap);
+            srcPtr += 2;
         }
     }
-//    for (i = lower_limit ; i < upper_limit ; i++) {
-//        for (j =  lower_limit ; j < upper_limit ; j++) {
-//            *current_pixel = applyKernel(dim, i, j, src, kernelSize, kernel, kernelScale, filter);
-//            current_pixel = (void *) ((char *) current_pixel + size);
-//        }
-//        current_pixel = (void *) ((char *) current_pixel + sizeLeap);
-//    }
 }
 
 void charsToPixels(Image *charsImg, pixel* pixels) {
