@@ -14,12 +14,12 @@ void initialize_pixel_sum(pixel_sum *sum) {
 /*
  * assign_sum_to_pixel - Truncates pixel's new value to match the range [0,255]
  */
-static inline void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum, int kernelScale, bool blur) {
+static inline void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum, float kernelScale, bool blur) {
 
     // divide by kernel's weight
-    sum.red = sum.red / kernelScale;
-    sum.green = sum.green / kernelScale;
-    sum.blue = sum.blue / kernelScale;
+    sum.red = sum.red * kernelScale;
+    sum.green = sum.green * kernelScale;
+    sum.blue = sum.blue * kernelScale;
 
     // truncate each pixel's color values to match the range [0,255]
     if (!blur) {
@@ -40,13 +40,10 @@ static inline void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum, int 
 * sum_pixels_by_weight - Sums pixel values, scaled by given weight
 */
 static inline void sum_pixels_by_weight(pixel_sum *sum, pixel p, int weight) {
-//    sum->red += ((int) p.red) * weight;
-//    sum->green += ((int) p.green) * weight;
-//    sum->blue += ((int) p.blue) * weight;
-    // more efficient version:
-     sum->red += p.red * weight;
-     sum->green += p.green * weight;
-     sum->blue += p.blue * weight;
+    sum->red += ((int) p.red) * weight;
+    sum->green += ((int) p.green) * weight;
+    sum->blue += ((int) p.blue) * weight;
+
     // sum->num++;
     return;
 }
@@ -54,7 +51,7 @@ static inline void sum_pixels_by_weight(pixel_sum *sum, pixel p, int weight) {
 /*
  *  Applies kernel for pixel at (i,j)
  */
-static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
+static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], float kernelScale, bool filter, bool blur) {
 
     pixel_sum sum;
     pixel current_pixel;
@@ -68,32 +65,14 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
 
 
     register pixel *srcPtr = src;
-    register pixel *srcPtr1 = src + 1;
-    register pixel *srcPtr2 = src + 2;
-    register pixel *srcPtr3 = src + dim;
-    register pixel *srcPtr4 = src + dim + 1;
-    register pixel *srcPtr5 = src + dim + 2;
-    register pixel *srcPtr6 = src + 2 * dim;
-    register pixel *srcPtr7 = src + 2 * dim + 1;
-    register pixel *srcPtr8 = src + 2 * dim + 2;
-
-    sum_pixels_by_weight(&sum, *srcPtr, kernel[0][0]);
-    sum_pixels_by_weight(&sum, *srcPtr1, kernel[0][1]);
-    sum_pixels_by_weight(&sum, *srcPtr2, kernel[0][2]);
-    sum_pixels_by_weight(&sum, *srcPtr3, kernel[1][0]);
-    sum_pixels_by_weight(&sum, *srcPtr4, kernel[1][1]);
-    sum_pixels_by_weight(&sum, *srcPtr5, kernel[1][2]);
-    sum_pixels_by_weight(&sum, *srcPtr6, kernel[2][0]);
-    sum_pixels_by_weight(&sum, *srcPtr7, kernel[2][1]);
-    sum_pixels_by_weight(&sum, *srcPtr8, kernel[2][2]);
-//    for(ii = 0 ; ii <= 2 ; ii++) {
-//        for(jj = 0 ; jj <= 2 ; jj++) {
-//            // apply kernel on pixel at [ii,jj]
-//            sum_pixels_by_weight(&sum, *srcPtr, kernel[ii][jj]);
-//            srcPtr++;
-//        }
-//        srcPtr += dim - 3;
-//    }
+    for(ii = 0 ; ii <= 2 ; ii++) {
+        for(jj = 0 ; jj <= 2 ; jj++) {
+            // apply kernel on pixel at [ii,jj]
+            sum_pixels_by_weight(&sum, *srcPtr, kernel[ii][jj]);
+            srcPtr++;
+        }
+        srcPtr += dim - 3;
+    }
     if (!filter) {
         // assign kernel's result to pixel at [i,j]
         assign_sum_to_pixel(&current_pixel, sum, kernelScale, blur);
@@ -101,8 +80,7 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
     }
 
     // find min and max coordinates
-//    srcPtr -= (dim + 2);
-//    srcPtr -= dim;
+    srcPtr -= dim * 3;
     pixel *minPtr = srcPtr;
     pixel *maxPtr = srcPtr;
     for(ii = 0 ; ii <= 2 ; ii++) {
@@ -118,6 +96,7 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
                 max_intensity = intensity;
                 maxPtr = srcPtr;
             }
+
             srcPtr++;
         }
         srcPtr += dim - 3;
@@ -132,7 +111,7 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
     return current_pixel;
 }
 
-static inline pixel applyKernel1x3(int dim, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
+static inline pixel applyKernel1x3(int dim, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], float kernelScale, bool filter, bool blur) {
 
     pixel_sum sum;
     pixel current_pixel;
@@ -204,6 +183,7 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
     int leap = &(dst[iDimCounter + dim + lower_limit]) - &(dst[iDimCounter + upper_limit]);
     int size = sizeof(pixel);
     int sizeLeap = leap * size;
+    float kernelScaleF = 1.0 / kernelScale;
 
     pixel *current_pixel = &(dst[iDimCounter + lower_limit]);
     // check if the kernel is 1x3 (zeros on above and below)
@@ -211,7 +191,7 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
         pixel *srcPtr = &(src[calcIndex(lower_limit - 1, lower_limit - 1, dim)]);
         for (i = lower_limit; i < upper_limit; i++) {
             for (j = lower_limit; j < upper_limit; j++) {
-                *current_pixel = applyKernel(dim,srcPtr, kernelSize, kernel, kernelScale, filter, blur);
+                *current_pixel = applyKernel(dim,srcPtr, kernelSize, kernel, kernelScaleF, filter, blur);
                 current_pixel++;
                 srcPtr++;
             }
@@ -222,7 +202,7 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
         pixel *srcPtr = &(src[calcIndex(lower_limit, lower_limit - 1, dim)]);
         for (i = lower_limit; i < upper_limit; i++) {
             for (j = lower_limit; j < upper_limit; j++) {
-                *current_pixel = applyKernel1x3(dim, srcPtr, kernelSize, kernel, kernelScale, filter, blur);
+                *current_pixel = applyKernel1x3(dim, srcPtr, kernelSize, kernel, kernelScaleF, filter, blur);
                 current_pixel++;
                 srcPtr++;
             }
