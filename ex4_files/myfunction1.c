@@ -62,6 +62,7 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
     initialize_pixel_sum(&sum);
 
     int ii , jj;
+    int leap = dim - 3;
 
 
     register pixel *srcPtr = src;
@@ -71,7 +72,7 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
             sum_pixels_by_weight(&sum, *srcPtr, kernel[ii][jj]);
             srcPtr++;
         }
-        srcPtr += dim - 3;
+        srcPtr += leap;
     }
     if (!filter) {
         // assign kernel's result to pixel at [i,j]
@@ -93,7 +94,7 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
 
             srcPtr++;
         }
-        srcPtr += dim - 3;
+        srcPtr += leap;
     }
     // filter out min and max
     sum_pixels_by_weight(&sum, *(minPtr), -1);
@@ -176,7 +177,7 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
     int iDimCounter = lower_limit * dim;
     int leap = &(dst[iDimCounter + dim + lower_limit]) - &(dst[iDimCounter + upper_limit]);
     int size = sizeof(pixel);
-    int sizeLeap = leap * size;
+//    int sizeLeap = leap * size;
     float kernelScaleF = 1.0 / kernelScale;
 
     pixel *current_pixel = &(dst[iDimCounter + lower_limit]);
