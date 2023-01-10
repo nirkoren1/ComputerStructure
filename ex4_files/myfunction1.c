@@ -47,11 +47,11 @@ static inline void sum_pixels_by_weight(pixel_sum *sum, pixel p, int weight) {
         return;
     }
     if (weight == -1) {
-        sum->red -= p.red;
-        sum->green -= p.green;
-        sum->blue -= p.blue;
+        sum->red += -p.red;
+        sum->green += -p.green;
+        sum->blue += -p.blue;
         return;
-    };
+    }
     sum->red += p.red * weight;
     sum->green += p.green * weight;
     sum->blue += p.blue * weight;
