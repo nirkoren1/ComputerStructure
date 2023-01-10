@@ -14,7 +14,7 @@ void initialize_pixel_sum(pixel_sum *sum) {
 /*
  * assign_sum_to_pixel - Truncates pixel's new value to match the range [0,255]
  */
-static void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum, int kernelScale, bool blur) {
+static inline void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum, int kernelScale, bool blur) {
 
     // divide by kernel's weight
     sum.red = sum.red / kernelScale;
