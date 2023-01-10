@@ -91,7 +91,7 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
             // check if smaller than min or higher than max and update
             loop_pixel = *srcPtr;
             int intensity = ((int) loop_pixel.red) + ((int) loop_pixel.green) + ((int) loop_pixel.blue);
-            intensity > min_intensity ? 0: (min_intensity = intensity, minPtr = srcPtr);
+            intensity <= min_intensity ? (min_intensity = intensity, minPtr = srcPtr): 0;
             intensity > max_intensity ? (max_intensity = intensity, maxPtr = srcPtr): 0;
 
             srcPtr++;
