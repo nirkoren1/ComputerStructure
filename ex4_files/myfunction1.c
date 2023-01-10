@@ -70,22 +70,22 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
     register pixel *srcPtr = src;
     register int leap = 0;
     sum_pixels_by_weight(&sum, *srcPtr, kernel[0][0]);
-    leap += 1;
-    sum_pixels_by_weight(&sum, *(srcPtr + leap), kernel[0][1]);
-    leap += 1;
-    sum_pixels_by_weight(&sum, *(srcPtr + leap), kernel[0][2]);
-    leap += dim - 2;
-    sum_pixels_by_weight(&sum, *(srcPtr + leap), kernel[1][0]);
-    leap += 1;
-    sum_pixels_by_weight(&sum, *(srcPtr + leap), kernel[1][1]);
-    leap += 1;
-    sum_pixels_by_weight(&sum, *(srcPtr + leap), kernel[1][2]);
-    leap += dim - 2;
-    sum_pixels_by_weight(&sum, *(srcPtr + leap), kernel[2][0]);
-    leap += 1;
-    sum_pixels_by_weight(&sum, *(srcPtr + leap), kernel[2][1]);
-    leap += 1;
-    sum_pixels_by_weight(&sum, *(srcPtr + leap), kernel[2][2]);
+    srcPtr++;
+    sum_pixels_by_weight(&sum, *(srcPtr), kernel[0][1]);
+    srcPtr++;
+    sum_pixels_by_weight(&sum, *(srcPtr), kernel[0][2]);
+    srcPtr += dim - 2;
+    sum_pixels_by_weight(&sum, *(srcPtr), kernel[1][0]);
+    srcPtr++;
+    sum_pixels_by_weight(&sum, *(srcPtr), kernel[1][1]);
+    srcPtr++;
+    sum_pixels_by_weight(&sum, *(srcPtr), kernel[1][2]);
+    srcPtr += dim - 2;
+    sum_pixels_by_weight(&sum, *(srcPtr), kernel[2][0]);
+    srcPtr++;
+    sum_pixels_by_weight(&sum, *(srcPtr), kernel[2][1]);
+    srcPtr++;
+    sum_pixels_by_weight(&sum, *(srcPtr), kernel[2][2]);
 //    for(ii = 0 ; ii <= 2 ; ii++) {
 //        for(jj = 0 ; jj <= 2 ; jj++) {
 //            // apply kernel on pixel at [ii,jj]
@@ -101,7 +101,8 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
     }
 
     // find min and max coordinates
-//    srcPtr -= dim * 3;
+    srcPtr -= (dim + 2);
+    srcPtr -= dim;
     pixel *minPtr = srcPtr;
     pixel *maxPtr = srcPtr;
     for(ii = 0 ; ii <= 2 ; ii++) {
