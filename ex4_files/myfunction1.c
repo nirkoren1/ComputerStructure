@@ -40,10 +40,24 @@ static inline void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum, floa
 * sum_pixels_by_weight - Sums pixel values, scaled by given weight
 */
 static inline void sum_pixels_by_weight(pixel_sum *sum, pixel p, int weight) {
-    weight == 1 ? (sum->red += p.red, sum->green += p.green, sum->blue += p.blue) : 0;
-    weight == -1 ? (sum->red -= p.red , sum->green -= p.green, sum->blue -= p.blue) : 0;
-    weight != 1 && weight != -1 ? (sum->red += p.red * weight, sum->green += p.green * weight, sum->blue += p.blue * weight) : 0;
-
+//    weight == 1 ? (sum->red += p.red, sum->green += p.green, sum->blue += p.blue) : 0;
+//    weight == -1 ? (sum->red -= p.red , sum->green -= p.green, sum->blue -= p.blue) : 0;
+//    weight != 1 && weight != -1 ? (sum->red += p.red * weight, sum->green += p.green * weight, sum->blue += p.blue * weight) : 0;
+    if (weight == 1) {
+        sum->red += p.red;
+        sum->green += p.green;
+        sum->blue += p.blue;
+    }
+    else if (weight == -1) {
+        sum->red -= p.red;
+        sum->green -= p.green;
+        sum->blue -= p.blue;
+    }
+    else {
+        sum->red += p.red * weight;
+        sum->green += p.green * weight;
+        sum->blue += p.blue * weight;
+    }
     // sum->num++;
     return;
 }
