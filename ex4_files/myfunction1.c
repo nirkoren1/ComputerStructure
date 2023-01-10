@@ -16,12 +16,12 @@ void initialize_pixel_sum(pixel_sum *sum) {
  */
 static inline void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum, float kernelScale, bool blur) {
 
-    // divide by kernel's weight
+    // divide by kernel's weight (changed to multiplication by 1/kernelScale)
     sum.red = sum.red * kernelScale;
     sum.green = sum.green * kernelScale;
     sum.blue = sum.blue * kernelScale;
 
-    // truncate each pixel's color values to match the range [0,255]
+    // truncate each pixel's color values to match the range [0,255] only if we are not blurring
     if (!blur) {
         current_pixel->red = (min(max(sum.red, 0), 255));
         current_pixel->green = (min(max(sum.green, 0), 255));
@@ -29,7 +29,7 @@ static inline void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum, floa
         return;
     }
 
-
+    // if we are blurring, we don't truncate the pixel's color values
     current_pixel->red = sum.red;
     current_pixel->green = sum.green;
     current_pixel->blue = sum.blue;
@@ -55,8 +55,8 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
 
     pixel_sum sum;
     pixel current_pixel;
-    register int min_intensity = 766; // arbitrary value that is higher than maximum possible intensity, which is 255*3=765
-    register int max_intensity = -1; // arbitrary value that is lower than minimum possible intensity, which is 0
+    int min_intensity = 766; // arbitrary value that is higher than maximum possible intensity, which is 255*3=765
+    int max_intensity = -1; // arbitrary value that is lower than minimum possible intensity, which is 0
     pixel loop_pixel;
 
     initialize_pixel_sum(&sum);
@@ -68,15 +68,8 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
 
     register pixel *srcPtr = src;
     register int *kernelPtr = &kernel[0][0];
-//    for(ii = 0 ; ii <= 2 ; ii++) {
-//        for(jj = 0 ; jj <= 2 ; jj++) {
-//            // apply kernel on pixel at [ii,jj]
-//            sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
-//            srcPtr++;
-//            kernelPtr++;
-//        }
-//        srcPtr += leap;
-//    }
+
+    // loop over kernel and sum pixels
     sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
     srcPtr++;
     kernelPtr++;
@@ -112,13 +105,12 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
     srcPtr -= dim * 2 + 2;
     pixel *minPtr = srcPtr;
     pixel *maxPtr = srcPtr;
-    register int intensity;
     for(ii = 0 ; ii <= 2 ; ii++) {
         for(jj = 0 ; jj <= 2 ; jj++) {
             // check if smaller than min or higher than max and update
             loop_pixel = *srcPtr;
-            intensity = loop_pixel.red + loop_pixel.green + loop_pixel.blue;
-            intensity < min_intensity ? (min_intensity = intensity, minPtr = srcPtr): 0;
+            int intensity = loop_pixel.red + loop_pixel.green + loop_pixel.blue;
+            intensity <= min_intensity ? (min_intensity = intensity, minPtr = srcPtr): 0;
             intensity == min_intensity ? (min_intensity = intensity, minPtr = srcPtr): 0;
             intensity > max_intensity ? (max_intensity = intensity, maxPtr = srcPtr): 0;
 
@@ -136,6 +128,9 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
     return current_pixel;
 }
 
+/*
+ *  Applies kernel for pixel at (i,j) - optimized version for 3x3 kernel
+ */
 static inline pixel applyKernel1x3(int dim, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], float kernelScale, bool filter, bool blur) {
 
     pixel_sum sum;
@@ -206,8 +201,6 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
     int lower_limit = kernelSize / 2;
     int iDimCounter = lower_limit * dim;
     int leap = &(dst[iDimCounter + dim + lower_limit]) - &(dst[iDimCounter + upper_limit]);
-    int size = sizeof(pixel);
-//    int sizeLeap = leap * size;
     float kernelScaleF = 1.0 / kernelScale;
 
     pixel *current_pixel = &(dst[iDimCounter + lower_limit]);
