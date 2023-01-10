@@ -55,8 +55,8 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
 
     pixel_sum sum;
     pixel current_pixel;
-    int min_intensity = 766; // arbitrary value that is higher than maximum possible intensity, which is 255*3=765
-    int max_intensity = -1; // arbitrary value that is lower than minimum possible intensity, which is 0
+    register int min_intensity = 766; // arbitrary value that is higher than maximum possible intensity, which is 255*3=765
+    register int max_intensity = -1; // arbitrary value that is lower than minimum possible intensity, which is 0
     pixel loop_pixel;
 
     initialize_pixel_sum(&sum);
@@ -112,11 +112,12 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
     srcPtr -= dim * 2 + 2;
     pixel *minPtr = srcPtr;
     pixel *maxPtr = srcPtr;
+    register int intensity;
     for(ii = 0 ; ii <= 2 ; ii++) {
         for(jj = 0 ; jj <= 2 ; jj++) {
             // check if smaller than min or higher than max and update
             loop_pixel = *srcPtr;
-            int intensity = loop_pixel.red + loop_pixel.green + loop_pixel.blue;
+            intensity = loop_pixel.red + loop_pixel.green + loop_pixel.blue;
             intensity < min_intensity ? (min_intensity = intensity, minPtr = srcPtr): 0;
             intensity == min_intensity ? (min_intensity = intensity, minPtr = srcPtr): 0;
             intensity > max_intensity ? (max_intensity = intensity, maxPtr = srcPtr): 0;
