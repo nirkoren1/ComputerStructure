@@ -66,11 +66,13 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
 
 
     register pixel *srcPtr = src;
+    register int *kernelPtr = &kernel[0][0];
     for(ii = 0 ; ii <= 2 ; ii++) {
         for(jj = 0 ; jj <= 2 ; jj++) {
             // apply kernel on pixel at [ii,jj]
-            sum_pixels_by_weight(&sum, *srcPtr, kernel[ii][jj]);
+            sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
             srcPtr++;
+            kernelPtr++;
         }
         srcPtr += leap;
     }
