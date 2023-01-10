@@ -130,16 +130,17 @@ static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, i
 //    int upperBoundII = i + 1;
 //    int upperBoundJJ = j + 1;
 //    int lowerBoundII = i - 1;
-    int lowerBoundJJ = j - 1;
+//    int lowerBoundJJ = j - 1;
     int ii , jj;
 
 
-    register pixel *srcPtr = &(src[calcIndex(i, lowerBoundJJ, dim)]);
+    register pixel *srcPtr = src;
     for(jj = 0 ; jj <= 2 ; jj++) {
         // apply kernel on pixel at [ii,jj]
         sum_pixels_by_weight(&sum, *srcPtr, kernel[1][jj]);
         srcPtr++;
     }
+
     if (!filter) {
         // assign kernel's result to pixel at [i,j]
         assign_sum_to_pixel(&current_pixel, sum, kernelScale, blur);
@@ -209,7 +210,7 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
         pixel *srcPtr = &(src[calcIndex(lower_limit, lower_limit - 1, dim)]);
         for (i = lower_limit; i < upper_limit; i++) {
             for (j = lower_limit; j < upper_limit; j++) {
-                *current_pixel = applyKernel1x3(dim, i, j, src, kernelSize, kernel, kernelScale, filter, blur);
+                *current_pixel = applyKernel1x3(dim, i, j, srcPtr, kernelSize, kernel, kernelScale, filter, blur);
                 current_pixel = (void *) ((char *) current_pixel + size);
                 srcPtr++;
             }
