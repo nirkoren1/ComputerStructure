@@ -39,7 +39,7 @@ static inline void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum, int 
 /*
 * sum_pixels_by_weight - Sums pixel values, scaled by given weight
 */
-static void sum_pixels_by_weight(pixel_sum *sum, pixel p, int weight) {
+static inline void sum_pixels_by_weight(pixel_sum *sum, pixel p, int weight) {
     sum->red += ((int) p.red) * weight;
     sum->green += ((int) p.green) * weight;
     sum->blue += ((int) p.blue) * weight;
@@ -50,7 +50,7 @@ static void sum_pixels_by_weight(pixel_sum *sum, pixel p, int weight) {
 /*
  *  Applies kernel for pixel at (i,j)
  */
-static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
+static inline pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
 
 //    int currRow, currCol;
     pixel_sum sum;
@@ -116,7 +116,7 @@ static pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int 
     return current_pixel;
 }
 
-static pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
+static inline pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
 
     pixel_sum sum;
     pixel current_pixel;
