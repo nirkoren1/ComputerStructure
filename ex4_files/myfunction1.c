@@ -40,24 +40,10 @@ static inline void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum, floa
 * sum_pixels_by_weight - Sums pixel values, scaled by given weight
 */
 static inline void sum_pixels_by_weight(pixel_sum *sum, pixel p, int weight) {
-//    weight == 1 ? (sum->red += p.red, sum->green += p.green, sum->blue += p.blue) : 0;
-//    weight == -1 ? (sum->red -= p.red , sum->green -= p.green, sum->blue -= p.blue) : 0;
-//    weight != 1 && weight != -1 ? (sum->red += p.red * weight, sum->green += p.green * weight, sum->blue += p.blue * weight) : 0;
-    if (weight == 1) {
-        sum->red += p.red;
-        sum->green += p.green;
-        sum->blue += p.blue;
-    }
-    else if (weight == -1) {
-        sum->red -= p.red;
-        sum->green -= p.green;
-        sum->blue -= p.blue;
-    }
-    else {
-        sum->red += p.red * weight;
-        sum->green += p.green * weight;
-        sum->blue += p.blue * weight;
-    }
+    weight == 1 ? (sum->red += p.red, sum->green += p.green, sum->blue += p.blue) : 0;
+    weight == -1 ? (sum->red -= p.red , sum->green -= p.green, sum->blue -= p.blue) : 0;
+    weight != 1 && weight != -1 ? (sum->red += p.red * weight, sum->green += p.green * weight, sum->blue += p.blue * weight) : 0;
+
     // sum->num++;
     return;
 }
@@ -82,40 +68,42 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
 
     register pixel *srcPtr = src;
     register int *kernelPtr = &kernel[0][0];
-//    for(ii = 0 ; ii <= 2 ; ii++) {
-//        for(jj = 0 ; jj <= 2 ; jj++) {
-//            // apply kernel on pixel at [ii,jj]
-//            sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
+    register int offset;
+    for(ii = 0 ; ii <= 2 ; ii++) {
+        for(jj = 0 ; jj <= 2 ; jj++) {
+            // apply kernel on pixel at [ii,jj]
+            offset = ii * dim + jj;
+            sum_pixels_by_weight(&sum, *(srcPtr + offset), kernelPtr[ii * 3 + jj]);
 //            srcPtr++;
 //            kernelPtr++;
-//        }
+        }
 //        srcPtr += leap;
-//    }
-    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
-    srcPtr++;
-    kernelPtr++;
-    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
-    srcPtr++;
-    kernelPtr++;
-    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
-    srcPtr += leap;
-    kernelPtr++;
-    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
-    srcPtr++;
-    kernelPtr++;
-    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
-    srcPtr++;
-    kernelPtr++;
-    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
-    srcPtr += leap;
-    kernelPtr++;
-    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
-    srcPtr++;
-    kernelPtr++;
-    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
-    srcPtr++;
-    kernelPtr++;
-    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
+    }
+//    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
+//    srcPtr++;
+//    kernelPtr++;
+//    sum_pixels_by_weight(&sum, *(srcPtr + offset), *kernelPtr);
+//    srcPtr++;
+//    kernelPtr++;
+//    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
+//    srcPtr += leap;
+//    kernelPtr++;
+//    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
+//    srcPtr++;
+//    kernelPtr++;
+//    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
+//    srcPtr++;
+//    kernelPtr++;
+//    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
+//    srcPtr += leap;
+//    kernelPtr++;
+//    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
+//    srcPtr++;
+//    kernelPtr++;
+//    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
+//    srcPtr++;
+//    kernelPtr++;
+//    sum_pixels_by_weight(&sum, *srcPtr, *kernelPtr);
     if (!filter) {
         // assign kernel's result to pixel at [i,j]
         assign_sum_to_pixel(&current_pixel, sum, kernelScale, blur);
@@ -123,7 +111,7 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
     }
 
     // find min and max coordinates
-    srcPtr -= dim * 2 + 2;
+//    srcPtr -= dim * 2 + 2;
     pixel *minPtr = srcPtr;
     pixel *maxPtr = srcPtr;
     for(ii = 0 ; ii <= 2 ; ii++) {
