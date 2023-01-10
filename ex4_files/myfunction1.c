@@ -209,7 +209,7 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
     }
 }
 
-void charsToPixels(Image *charsImg, pixel* pixels) {
+void charsToPixels(pixel* pixels) {
 
     int row, col;
     for (row = 0 ; row < m ; row++) {
@@ -262,12 +262,12 @@ void copyPixels(pixel* src, pixel* dst) {
     }
 }
 
-void doConvolution(Image *image, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
+void doConvolution(int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
 
     pixel* pixelsImg = malloc(m*n*sizeof(pixel));
     pixel* backupOrg = malloc(m*n*sizeof(pixel));
 
-    charsToPixels(image, pixelsImg);
+    charsToPixels(pixelsImg);
     copyPixels(pixelsImg, backupOrg);
 
     smooth(m, backupOrg, pixelsImg, kernelSize, kernel, kernelScale, filter, blur);
