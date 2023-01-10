@@ -68,24 +68,24 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
 
 
     register pixel *srcPtr = src;
-    register int leap = 0;
+    register pixel *srcPtr1 = src + 1;
+    register pixel *srcPtr2 = src + 2;
+    register pixel *srcPtr3 = src + dim;
+    register pixel *srcPtr4 = src + dim + 1;
+    register pixel *srcPtr5 = src + dim + 2;
+    register pixel *srcPtr6 = src + 2 * dim;
+    register pixel *srcPtr7 = src + 2 * dim + 1;
+    register pixel *srcPtr8 = src + 2 * dim + 2;
+
     sum_pixels_by_weight(&sum, *srcPtr, kernel[0][0]);
-    srcPtr++;
-    sum_pixels_by_weight(&sum, *(srcPtr), kernel[0][1]);
-    srcPtr++;
-    sum_pixels_by_weight(&sum, *(srcPtr), kernel[0][2]);
-    srcPtr += dim - 2;
-    sum_pixels_by_weight(&sum, *(srcPtr), kernel[1][0]);
-    srcPtr++;
-    sum_pixels_by_weight(&sum, *(srcPtr), kernel[1][1]);
-    srcPtr++;
-    sum_pixels_by_weight(&sum, *(srcPtr), kernel[1][2]);
-    srcPtr += dim - 2;
-    sum_pixels_by_weight(&sum, *(srcPtr), kernel[2][0]);
-    srcPtr++;
-    sum_pixels_by_weight(&sum, *(srcPtr), kernel[2][1]);
-    srcPtr++;
-    sum_pixels_by_weight(&sum, *(srcPtr), kernel[2][2]);
+    sum_pixels_by_weight(&sum, *srcPtr1, kernel[0][1]);
+    sum_pixels_by_weight(&sum, *srcPtr2, kernel[0][2]);
+    sum_pixels_by_weight(&sum, *srcPtr3, kernel[1][0]);
+    sum_pixels_by_weight(&sum, *srcPtr4, kernel[1][1]);
+    sum_pixels_by_weight(&sum, *srcPtr5, kernel[1][2]);
+    sum_pixels_by_weight(&sum, *srcPtr6, kernel[2][0]);
+    sum_pixels_by_weight(&sum, *srcPtr7, kernel[2][1]);
+    sum_pixels_by_weight(&sum, *srcPtr8, kernel[2][2]);
 //    for(ii = 0 ; ii <= 2 ; ii++) {
 //        for(jj = 0 ; jj <= 2 ; jj++) {
 //            // apply kernel on pixel at [ii,jj]
@@ -101,8 +101,8 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
     }
 
     // find min and max coordinates
-    srcPtr -= (dim + 2);
-    srcPtr -= dim;
+//    srcPtr -= (dim + 2);
+//    srcPtr -= dim;
     pixel *minPtr = srcPtr;
     pixel *maxPtr = srcPtr;
     for(ii = 0 ; ii <= 2 ; ii++) {
