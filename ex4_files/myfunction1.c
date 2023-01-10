@@ -40,18 +40,9 @@ static inline void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum, floa
 * sum_pixels_by_weight - Sums pixel values, scaled by given weight
 */
 static inline void sum_pixels_by_weight(pixel_sum *sum, pixel p, int weight) {
-//    if (weight == 1) {
-//        sum->red += p.red;
-//        sum->green += p.green;
-//        sum->blue += p.blue;
-//        return;
-//    }
     weight == 1 ? (sum->red += p.red, sum->green += p.green, sum->blue += p.blue) : 0;
     weight == -1 ? (sum->red -= p.red , sum->green -= p.green, sum->blue -= p.blue) : 0;
     weight != 1 && weight != -1 ? (sum->red += p.red * weight, sum->green += p.green * weight, sum->blue += p.blue * weight) : 0;
-//    sum->red += p.red * weight;
-//    sum->green += p.green * weight;
-//    sum->blue += p.blue * weight;
 
     // sum->num++;
     return;
@@ -89,7 +80,7 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
     }
 
     // find min and max coordinates
-    srcPtr -= dim * 3;
+    srcPtr = src;
     pixel *minPtr = srcPtr;
     pixel *maxPtr = srcPtr;
     for(ii = 0 ; ii <= 2 ; ii++) {
@@ -97,16 +88,8 @@ static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[
             // check if smaller than min or higher than max and update
             loop_pixel = *srcPtr;
             int intensity = ((int) loop_pixel.red) + ((int) loop_pixel.green) + ((int) loop_pixel.blue);
-//            if (intensity <= min_intensity) {
-//                min_intensity = intensity;
-//                minPtr = srcPtr;
-//            }
             intensity <= min_intensity ? (min_intensity = intensity, minPtr = srcPtr): 0;
             intensity > max_intensity ? (max_intensity = intensity, maxPtr = srcPtr): 0;
-//            if (intensity > max_intensity) {
-//                max_intensity = intensity;
-//                maxPtr = srcPtr;
-//            }
 
             srcPtr++;
         }
