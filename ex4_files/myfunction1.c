@@ -50,22 +50,16 @@ static inline void sum_pixels_by_weight(pixel_sum *sum, pixel p, int weight) {
 /*
  *  Applies kernel for pixel at (i,j)
  */
-static inline pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
+static inline pixel applyKernel(int dim, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
 
-//    int currRow, currCol;
     pixel_sum sum;
     pixel current_pixel;
     int min_intensity = 766; // arbitrary value that is higher than maximum possible intensity, which is 255*3=765
     int max_intensity = -1; // arbitrary value that is lower than minimum possible intensity, which is 0
-    int min_row, min_col, max_row, max_col;
     pixel loop_pixel;
 
     initialize_pixel_sum(&sum);
 
-//    int upperBoundII = i + 1;
-//    int upperBoundJJ = j + 1;
-//    int lowerBoundII = i - 1;
-//    int lowerBoundJJ = j - 1;
     int ii , jj;
 
 
@@ -95,21 +89,16 @@ static inline pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSiz
             int intensity = ((int) loop_pixel.red) + ((int) loop_pixel.green) + ((int) loop_pixel.blue);
             if (intensity <= min_intensity) {
                 min_intensity = intensity;
-//                min_row = ii;
-//                min_col = jj;
                 minPtr = srcPtr;
             }
             if (intensity > max_intensity) {
                 max_intensity = intensity;
-//                max_row = ii;
-//                max_col = jj;
                 maxPtr = srcPtr;
             }
             srcPtr++;
         }
         srcPtr += dim - 3;
     }
-//    srcPtr -= dim * 3;
     // filter out min and max
     sum_pixels_by_weight(&sum, *(minPtr), -1);
     sum_pixels_by_weight(&sum, *(maxPtr), -1);
@@ -120,7 +109,7 @@ static inline pixel applyKernel(int dim, int i, int j, pixel *src, int kernelSiz
     return current_pixel;
 }
 
-static inline pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
+static inline pixel applyKernel1x3(int dim, pixel *src, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale, bool filter, bool blur) {
 
     pixel_sum sum;
     pixel current_pixel;
@@ -131,10 +120,6 @@ static inline pixel applyKernel1x3(int dim, int i, int j, pixel *src, int kernel
 
     initialize_pixel_sum(&sum);
 
-//    int upperBoundII = i + 1;
-//    int upperBoundJJ = j + 1;
-//    int lowerBoundII = i - 1;
-//    int lowerBoundJJ = j - 1;
     int ii , jj;
 
 
@@ -203,22 +188,22 @@ void smooth(int dim, pixel *src, pixel *dst, int kernelSize, int kernel[kernelSi
         pixel *srcPtr = &(src[calcIndex(lower_limit - 1, lower_limit - 1, dim)]);
         for (i = lower_limit; i < upper_limit; i++) {
             for (j = lower_limit; j < upper_limit; j++) {
-                *current_pixel = applyKernel(dim, i, j, srcPtr, kernelSize, kernel, kernelScale, filter, blur);
-                current_pixel = (void *) ((char *) current_pixel + size);
+                *current_pixel = applyKernel(dim,srcPtr, kernelSize, kernel, kernelScale, filter, blur);
+                current_pixel++;
                 srcPtr++;
             }
-            current_pixel = (void *) ((char *) current_pixel + sizeLeap);
+            current_pixel += leap;
             srcPtr += 2;
         }
     } else {
         pixel *srcPtr = &(src[calcIndex(lower_limit, lower_limit - 1, dim)]);
         for (i = lower_limit; i < upper_limit; i++) {
             for (j = lower_limit; j < upper_limit; j++) {
-                *current_pixel = applyKernel1x3(dim, i, j, srcPtr, kernelSize, kernel, kernelScale, filter, blur);
-                current_pixel = (void *) ((char *) current_pixel + size);
+                *current_pixel = applyKernel1x3(dim, srcPtr, kernelSize, kernel, kernelScale, filter, blur);
+                current_pixel++;
                 srcPtr++;
             }
-            current_pixel = (void *) ((char *) current_pixel + sizeLeap);
+            current_pixel += leap;
             srcPtr += 2;
         }
     }
